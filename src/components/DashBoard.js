@@ -1,41 +1,54 @@
 import React, { useState, useEffect } from "react";
 import api from "../api/api";
+import AddJobForm from "./AddJobForm";
 
 const Dashboard = () => {
   const [jobApplications, setJobApplications] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const fetchJobApplications = async () => {
+    try {
+      // Retrieve the JWT token from localStorage
+      const token = localStorage.getItem("yourAuthToken");
+
+      const response = await fetch(`${api}/user/job-applications`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setJobApplications(data);
+      } else {
+        console.error("Failed to fetch job applications:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error during job applications fetch:", error.message);
+    }
+  };
+
+  const handleAddJob = () => {
+    fetchJobApplications();
+    setIsModalOpen(false);
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
-    const fetchJobApplications = async () => {
-      try {
-        // Retrieve the JWT token from localStorage
-        const token = localStorage.getItem("yourAuthToken");
-
-        const response = await fetch(`${api}/user/job-applications`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setJobApplications(data);
-        } else {
-          console.error(
-            "Failed to fetch job applications:",
-            response.statusText
-          );
-        }
-      } catch (error) {
-        console.error("Error during job applications fetch:", error.message);
-      }
-    };
-
     fetchJobApplications();
   }, []);
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="flex flex-col h-full container mx-auto p-8">
       <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
+
       <table className="min-w-full bg-white border border-gray-300">
         <thead>
           <tr className="bg-gray-100 border-b">
@@ -69,6 +82,20 @@ const Dashboard = () => {
           ))}
         </tbody>
       </table>
+      <div className="flex justify-end items-center mt-auto mb-4 p-2">
+        <button
+          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          onClick={openModal}
+        >
+          Add Job
+        </button>
+      </div>
+
+      {isModalOpen && (
+        <div className="fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex items-center justify-center">
+          <AddJobForm onAddJob={handleAddJob} closeModal={closeModal} />
+        </div>
+      )}
     </div>
   );
 };
