@@ -6,10 +6,11 @@ const AddJobForm = ({ onAddJob, closeModal }) => {
     companyName: "",
     jobTitle: "",
     jobLink: "",
-    status: "Not applied",
-    response: null,
+    status: "", 
+    response: "", 
     notes: "",
   });
+  
 
   const handleChange = (e) => {
     setFormData({
@@ -108,8 +109,8 @@ const AddJobForm = ({ onAddJob, closeModal }) => {
 
       <div className="flex space-x-4 mt-4">
         <select
-          name="status"
-          value={formData.status}
+          name="response"
+          value={formData.response}
           onChange={handleChange}
           className="border border-gray-300 p-2 w-1/2"
         >
@@ -120,8 +121,8 @@ const AddJobForm = ({ onAddJob, closeModal }) => {
           <option value="Rejected">Rejected</option>
         </select>
         <select
-          name="response"
-          value={formData.response || ""}
+          name="status"
+          value={formData.status || ""}
           onChange={handleChange}
           className="border border-gray-300 p-2 w-1/2"
         >
@@ -132,19 +133,18 @@ const AddJobForm = ({ onAddJob, closeModal }) => {
 
       <div className="mt-4 mb-4">
         <label
-          htmlFor="jobNote"
+          htmlFor="notes"
           className="block text-sm font-medium text-gray-700"
         >
           Job Notes:
         </label>
         <input
           type="text"
-          name="jobNote"
+          name="notes"
           value={formData.notes}
           onChange={handleChange}
           placeholder="Enter job notes"
           className="border p-2 w-full"
-          required
         />
       </div>
 

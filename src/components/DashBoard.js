@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import api from "../api/api";
 import AddJobForm from "./AddJobForm";
+import DeleteJob from "./DeleteJob";
 
 const Dashboard = () => {
   const [jobApplications, setJobApplications] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedApplication, setSelectedApplication] = useState(null);
 
   const fetchJobApplications = async () => {
     try {
@@ -39,6 +41,12 @@ const Dashboard = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleDelete = (applicationId) => {
+    setJobApplications((prevApplications) =>
+      prevApplications.filter((app) => app._id !== applicationId)
+    );
   };
 
   useEffect(() => {
@@ -78,6 +86,13 @@ const Dashboard = () => {
               <td className="py-2 px-4 border-r">{application.status}</td>
               <td className="py-2 px-4 border-r">{application.response}</td>
               <td className="py-2 px-4">{application.notes}</td>
+              <td className="py-2 px-4">
+                <DeleteJob
+                  applicationId={application._id}
+                  token={localStorage.getItem("yourAuthToken")}
+                  onDeleteSuccess={() => handleDelete(application._id)}
+                />
+              </td>
             </tr>
           ))}
         </tbody>
